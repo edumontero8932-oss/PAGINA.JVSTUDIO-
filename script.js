@@ -1,9 +1,6 @@
 const topbar = document.querySelector(".topbar");
 const pill = document.querySelector(".nav-pill");
 const menuBtn = document.querySelector(".menu-btn");
-const lightbox = document.querySelector(".lightbox");
-const lightboxImg = document.querySelector(".lightbox-inner img");
-const lightboxCap = document.querySelector(".lightbox-inner p");
 const year = document.getElementById("year");
 
 if (year) year.textContent = new Date().getFullYear();
@@ -20,34 +17,84 @@ document.querySelectorAll(".links a, .btn-contactar").forEach((a) => {
   a.addEventListener("click", () => pill.classList.remove("open"));
 });
 
-function openLightbox(src, title) {
-  if (!src) return;
-  lightboxImg.src = src;
-  lightboxImg.alt = title || "";
-  lightboxCap.textContent = title || "";
-  lightbox.classList.add("open");
-  document.body.style.overflow = "hidden";
+/* ========================================================================
+   VISOR INTERNO DEL PORTAFOLIO
+   Cada tarjeta abre únicamente la captura local asignada al proyecto.
+   ======================================================================== */
+const projectModal = document.getElementById("project-modal");
+const projectDialog = projectModal?.querySelector(".project-dialog");
+const projectImage = document.getElementById("project-detail-image");
+const projectTitle = document.getElementById("project-modal-title");
+const projectCanvas = document.getElementById("project-canvas");
+const projectViewport = document.getElementById("project-viewport");
+const projectZoomLevel = document.getElementById("project-zoom-level");
+const projectZoomControls = document.querySelectorAll("[data-zoom]");
+const projectCards = document.querySelectorAll(".project-card");
+
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.15;
+let projectZoom = 1;
+let lastProjectTrigger = null;
+
+function updateProjectZoom() {
+  if (!projectCanvas || !projectZoomLevel) return;
+  projectCanvas.style.width = `${Math.round(projectZoom * 100)}%`;
+  projectZoomLevel.value = `${Math.round(projectZoom * 100)}%`;
+  projectZoomLevel.textContent = `${Math.round(projectZoom * 100)}%`;
+  projectZoomControls.forEach((control) => {
+    const isZoomIn = control.dataset.zoom === "in";
+    control.disabled = isZoomIn ? projectZoom >= MAX_ZOOM : projectZoom <= MIN_ZOOM;
+  });
 }
 
-function closeLightbox() {
-  lightbox.classList.remove("open");
-  document.body.style.overflow = "";
+function openProject(card) {
+  if (!projectModal || !projectImage || !projectTitle || !projectViewport) return;
+
+  lastProjectTrigger = card;
+  projectTitle.textContent = card.dataset.projectTitle || "Proyecto";
+  projectImage.src = card.dataset.projectImage || "";
+  projectImage.alt = card.dataset.projectTitle || "Proyecto";
+  projectZoom = 1;
+  updateProjectZoom();
+  projectViewport.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  projectModal.hidden = false;
+  document.body.classList.add("project-modal-open");
+  window.requestAnimationFrame(() => {
+    projectModal.classList.add("open");
+    projectDialog?.focus();
+  });
 }
 
-document.querySelectorAll(".work-lightbox").forEach((el) => {
-  el.addEventListener("click", () => openLightbox(el.dataset.full, el.dataset.title));
-  el.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      openLightbox(el.dataset.full, el.dataset.title);
-    }
+function closeProject() {
+  if (!projectModal || projectModal.hidden) return;
+  projectModal.classList.remove("open");
+  document.body.classList.remove("project-modal-open");
+  window.setTimeout(() => {
+    projectModal.hidden = true;
+    if (projectImage) projectImage.src = "";
+    lastProjectTrigger?.focus();
+  }, 180);
+}
+
+projectCards.forEach((card) => {
+  card.addEventListener("click", () => openProject(card));
+});
+
+projectZoomControls.forEach((control) => {
+  control.addEventListener("click", () => {
+    const direction = control.dataset.zoom === "in" ? 1 : -1;
+    projectZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number((projectZoom + direction * ZOOM_STEP).toFixed(2))));
+    updateProjectZoom();
   });
 });
 
-document.querySelector(".close-x")?.addEventListener("click", closeLightbox);
-lightbox?.addEventListener("click", (e) => {
-  if (e.target === lightbox) closeLightbox();
+document.querySelectorAll("[data-project-close]").forEach((control) => {
+  control.addEventListener("click", closeProject);
 });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeLightbox();
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeProject();
+  }
 });
