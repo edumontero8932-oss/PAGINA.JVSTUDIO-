@@ -1,23 +1,30 @@
-# JV.STUDIO — Portafolio web (entrega corregida)
+# JV.STUDIO — Portafolio web
 
-## Corrección aplicada en esta versión
+## Correcciones aplicadas en esta versión
 
-Se corrigieron los links de los 4 iconos de redes sociales del bloque final
-(sección **Contacto**), que apuntaban a páginas genéricas:
+1. **Sección Sobre mí** — Se reemplazó el texto de presentación por la nueva
+   versión (branding, packaging, arte digital y storytelling visual).
+2. **Sección Servicios** — Cada servicio ahora incluye su descripción:
+   - Edición y retoque de archivos PSD y AI
+   - Retoque fotográfico
+   - Fotomontaje
+   - Flyer
+   - Afiches
+   - Edición de video
+   - Creación de videos
+3. **Sección Contacto** — Se corrigió el correo: `joaquinv1202@gmail.com`
+   (antes decía `joaquinvl202@gmail.com`), tanto en el texto como en el
+   enlace `mailto:`.
 
-| Red social | Link corregido |
-| --- | --- |
-| Instagram | https://www.instagram.com/jv.studio_oficial/ |
-| LinkedIn | https://www.linkedin.com/in/joaquinmontero02/ |
-| Behance | https://www.behance.net/Joaquinvalladares |
-| TikTok | https://www.tiktok.com/@jv.studio_oficial |
+## Correcciones de versiones anteriores
 
-Todos abren en una pestaña nueva (`target="_blank"`).
+- Links de los 4 iconos de redes sociales del bloque de Contacto
+  (Instagram, LinkedIn, Behance y TikTok), todos abren en pestaña nueva.
 
 ## Archivos
 
-- `index.html` — página principal (con los links corregidos).
-- `style.css` — estilos.
+- `index.html` — página principal (con los textos corregidos).
+- `style.css` — estilos (incluye el nuevo diseño de tarjetas de servicios).
 - `script.js` — interacciones (menú, lightbox, año automático).
 - `assets/` — imágenes del sitio:
   - `assets/projects/` — trabajos del portafolio.
