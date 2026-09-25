@@ -444,16 +444,55 @@ button {
   grid-area: tools;
   position: relative;
   z-index: 3;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  /* Fade the edges so the cards feel like they are entering the scene. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
+}
+
+.tools::before,
+.tools::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.tools::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(7, 25, 64, 0.75), transparent);
+}
+
+.tools::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(7, 25, 64, 0.75), transparent);
+}
+
+.tools-track {
+  display: flex;
+  width: max-content;
+  animation: tools-carousel 34s linear infinite;
+  will-change: transform;
+}
+
+.tool-set {
+  display: flex;
+  flex: 0 0 auto;
   gap: 12px;
+  padding-right: 12px;
 }
 
 .tool {
+  flex: 0 0 clamp(148px, 15vw, 190px);
+  min-height: 110px;
   background: rgba(8, 22, 48, 0.88);
   border: 1px solid rgba(90, 150, 255, 0.25);
   border-radius: 16px;
-  min-height: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -462,12 +501,13 @@ button {
   padding: 12px 8px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 .tool:hover {
   transform: translateY(-3px);
   border-color: rgba(90, 180, 255, 0.55);
+  background: rgba(10, 30, 64, 0.96);
 }
 
 .tool img {
@@ -483,16 +523,20 @@ button {
   text-align: center;
 }
 
-.tool.empty {
-  justify-content: center;
+@keyframes tools-carousel {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
-.dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #2f6dff;
-  box-shadow: 0 0 16px rgba(60, 130, 255, 0.8);
+.tools:hover .tools-track,
+.tools:focus-within .tools-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tools-track {
+    animation: none;
+  }
 }
 
 /* ==========================================================================
@@ -1148,9 +1192,6 @@ button {
   .about-text {
     padding-top: 10px;
   }
-  .tools {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px 16px;
@@ -1208,9 +1249,6 @@ button {
   .btn-white,
   .btn-ghost {
     width: 100%;
-  }
-  .tools {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .grid {
     grid-template-columns: 1fr;
